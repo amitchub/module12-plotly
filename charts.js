@@ -4,9 +4,9 @@ function init() {
 
   // Use the list of sample names to populate the select options
   d3.json("samples.json").then((data) => {
-    var sampleNames = data.names;
+    var sample_names = data.names;
 
-    sampleNames.forEach((sample) => {
+    sample_names.forEach((sample) => {
       selector
         .append("option")
         .text(sample)
@@ -14,19 +14,19 @@ function init() {
     });
 
     // Use the first sample from the list to build the initial plots
-    var firstSample = sampleNames[0];
-    buildCharts(firstSample);
-    buildMetadata(firstSample);
+    var first_sample = sample_names[0];
+    buildCharts(first_sample);
+    buildMetadata(first_sample);
   });
 }
 
 // Initialize the dashboard
 init();
 
-function optionChanged(newSample) {
+function optionChanged(new_sample) {
   // Fetch new data each time a new sample is selected
-  buildMetadata(newSample);
-  buildCharts(newSample);
+  buildMetadata(new_sample);
+  buildCharts(new_sample);
   
 }
 
@@ -35,12 +35,14 @@ function buildMetadata(sample) {
   d3.json("samples.json").then((data) => {
     var metadata = data.metadata;
     // Filter the data for the object with the desired sample number
-    var resultArray = metadata.filter(sampleObj => sampleObj.id == sample);
-    var result = resultArray[0];
+    var result_vector = metadata.filter(sampleObj => sampleObj.id == sample);
+    var result = result_vector[0];
     // Use d3 to select the panel with id of `#sample-metadata`
+    
     var PANEL = d3.select("#sample-metadata");
 
     // Use `.html("") to clear any existing metadata
+    
     PANEL.html("");
 
     // Use `Object.entries` to add each key and value pair to the panel
@@ -58,52 +60,48 @@ function buildCharts(sample) {
   // 2. Use d3.json to load and retrieve the samples.json file 
   d3.json("samples.json").then((sampledata) => {
     // 3. Create a variable that holds the samples array. 
-    var samplesArray = sampledata.samples;
-    //console.log(sampledata);
+    var samples_vector = sampledata.samples;
   
     // 4. Create a variable that filters the samples for the object with the desired sample number.
-    var samples = samplesArray.filter(sampleObj => sampleObj.id == sample);
-    //console.log(samples)
+    var samples = samples_vector.filter(sampleObj => sampleObj.id == sample);
+
     //  5. Create a variable that holds the first sample in the array.
 
     // 6. Create variables that hold the otu_ids, otu_labels, and sample_values.
-    var sampleOTU_array = samples[0];
-    var sampleOTU_ids = sampleOTU_array.otu_ids;
-    //console.log(sampleOTU_ids);
-    var sampleOTU_labels = sampleOTU_array.otu_labels;
-    //console.log(sampleOTU_labels);
-    var sampleSample_values = sampleOTU_array.sample_values;
-    //console.log(sampleSample_values);
+    var sampleOTU_vector = samples[0];
+    var OTU_ids = sampleOTU_vector.otu_ids;
+    var OTU_labels = sampleOTU_vector.otu_labels;
+    var Sample_values = sampleOTU_vector.sample_values;
 
     // 7. Create the yticks for the bar chart.
     // Hint: Get the the top 10 otu_ids and map them in descending order  
     //  so the otu_ids with the most bacteria are last. 
-    var bacteriaAll = samples.sort((a ,b) => a.sample_values - b.sample_values).reverse();
-    //console.log(bacteriaAll);
-    var allBacteria = bacteriaAll[0];
-    console.log(allBacteria)
-    var OTU_ids_Ten = allBacteria.otu_ids.slice(0,10);
-    var OTULabels_Ten = allBacteria.otu_labels.slice(0,10).reverse();
-    var sampleValues_Ten = allBacteria.sample_values.slice(0, 10).reverse();
+    var bacteria_complete = samples.sort((a ,b) => a.sample_values - b.sample_values).reverse();
+
+    var all_Bacteria = bacteria_complete[0];
+    console.log(all_Bacteria)
+    var OTU_ids_Ten = all_Bacteria.otu_ids.slice(0,10);
+    var OTU_labels_Ten = all_Bacteria.otu_labels.slice(0,10).reverse();
+    var Sample_values_Ten = all_Bacteria.sample_values.slice(0, 10).reverse();
     
 
     var yticks = OTU_ids_Ten.map(num => "OTU" + num).reverse();
     console.log(yticks);
-    console.log(sampleValues_Ten);
-    console.log(OTULabels_Ten);
-    //sampleValues_Ten.map(num => parseInt(num))
-    //console.log(yticks);
+
+    console.log(Sample_values_Ten);
+    
+    console.log(OTU_labels_Ten);
+
     // 8. Create the trace for the bar chart. 
 
     var trace = {
-      x: sampleValues_Ten,
+      x: Sample_values_Ten,
       y: yticks,
-      text: OTULabels_Ten,
+      text: OTU_labels_Ten,
       type: 'bar',
       orientation: 'h'
       };
 
-    //var barData = [trace];
     // 9. Create the layout for the bar chart. 
     var barLayout = {
       title:  {text: "<b>Top Ten Bacteria Found</b>"},
@@ -119,16 +117,16 @@ function buildCharts(sample) {
     // ----- challenge part 2 ------//
     // 1. Create the trace for the bubble chart.
     var  trace2 ={
-      x: sampleOTU_ids,
-      y: sampleSample_values,
-      text: sampleOTU_labels,
+      x: OTU_ids,
+      y: Sample_values,
+      text: OTU_labels,
       hoverformat: '<br><b>x</b>: %{x}<br>'+
                     '<br><b>y</b>: %{y}<br>'+
                     '<b>%{text}</b>',
       mode: 'markers',
       marker:{
-        size: sampleSample_values,
-        color: sampleOTU_ids,
+        size: Sample_values,
+        color: OTU_ids,
       }
     };
     var bubbleData = [trace2];
@@ -152,13 +150,13 @@ function buildCharts(sample) {
 
     // --------- Challenge Part 3 -------- //
     // D3: 1-3. Use Plotly to plot the data with the layout.
-    var metaData_All = sampledata.metadata
+    var all_metadata = sampledata.metadata
     //console.log(metaData_All)
-    var SampleMetaData = metaData_All.filter(sampleObj => sampleObj.id == sample);
+    var sample_metadata = all_metadata.filter(sampleObj => sampleObj.id == sample);
     //console.log(SampleMetaData)
     //console.log(sampledata)
     // convert wash freq to floating point number
-    sampleMetaData = SampleMetaData[0];
+    sampleMetaData = sample_metadata[0];
     wfreq = parseFloat(sampleMetaData.wfreq);
     console.log(wfreq);
 
