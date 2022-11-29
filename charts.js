@@ -61,7 +61,7 @@ function buildCharts(sample) {
   d3.json("samples.json").then((sampledata) => {
     // 3. Create a variable that holds the samples array. 
     var samples_vector = sampledata.samples;
-  
+    // Test2
     // 4. Create a variable that filters the samples for the object with the desired sample number.
     var samples = samples_vector.filter(sampleObj => sampleObj.id == sample);
 
@@ -113,7 +113,7 @@ function buildCharts(sample) {
     // 10. Use Plotly to plot the data with the layout. 
     Plotly.newPlot('bar', [trace], barLayout);
     
-
+    // Test 3
     // ----- challenge part 2 ------//
     // 1. Create the trace for the bubble chart.
     var  trace2 ={
